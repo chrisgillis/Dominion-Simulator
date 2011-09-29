@@ -45,7 +45,8 @@ class GameState {
 			'silver' => 30, // Idk
 			'gold' => 30, // Idk
 
-			'smithy' => 12
+			'smithy' => 12,
+			'village' => 12
 		);
 		$this->trash = array();
 		$this->turn = 1;

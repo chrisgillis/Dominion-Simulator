@@ -120,6 +120,7 @@ class Player {
 		if($this->actions) {
 			if($this->in_hand($card)) {
 				call_user_func($this->D->cards[$card]->effect, $this);
+				$this->discard_card($card);
 				$this->showHand();
 			}
 		}
@@ -141,6 +142,27 @@ class Player {
 		return false;
 	}
 
+	function has_at_least($quantity, $cardwanted) {
+		$all_cards = array_merge($this->hand, $this->deck, $this->discard);
+		$count = 0;
+		foreach($all_cards as $card) {
+			if($this->D->cards[$cardwanted]->name == $card->name) {
+				$count++;
+			}
+		}
+		if($count >= $quantity) {
+			return true;
+		}
+		return false;
+	}
+
+	function discard_card($cardwanted) {
+		foreach($this->hand as $k => $card) {
+			if($this->D->cards[$cardwanted]->name == $card->name) {
+				unset($this->hand[$k]);
+			}
+		}
+	}
 	/** 
 	 * Buy
 	 *

@@ -107,6 +107,17 @@ class CardManager {
 				$player->draw(3);
 			}
 		));
+
+		self::$cards['village'] = new Card(array(
+			'name' => 'Village',
+			'cost' => 3,
+			'type' => CardType::NormalAction,
+			'effect' => function($player) {
+				if(DEBUG) echo $player->name . ' doing village effect<br>';
+				$player->draw(1);
+				$player->actions += 2;
+			}
+		));
 	}
 
 	public static function get_cards() {

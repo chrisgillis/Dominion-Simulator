@@ -45,9 +45,10 @@ class BigMoney extends Strategy {
  *
  * @package Dominion Simulator
  */
-class BigMoneySmithy extends Strategy {
+class BigMoneyGrandSmithy extends Strategy {
 	function init() {
-		$this->has_smithy = 0;
+		$this->first_smithy = 0;
+		$this->smithies = 0;
 	}
 
 	function actionPhase() {
@@ -55,11 +56,21 @@ class BigMoneySmithy extends Strategy {
 	}
 
 	function buyPhase() {
-		if(! $this->has_smithy) {
+		if(! $this->first_smithy) {
 			if($this->player->buy_if_possible('smithy')) {
-				$this->has_smithy = 1;
+				$this->first_smithy++;
 			}
 		}
+
+		if($this->smithies < 2 
+		   && $this->player->has_at_least(1,'silver') 
+		   && $this->player->has_at_least(1,'gold')) {
+
+			   if($this->player->buy_if_possible('smithy')) {
+			    	$this->smithies++;
+			   }
+		}
+
 		$this->player->buy_if_possible('province');
 		$this->player->buy_if_possible('gold');
 		$this->player->buy_if_possible('silver');
@@ -95,22 +106,72 @@ class BigMoneySmithyDuchy extends Strategy {
 	}
 }
 
+/**
+ * Big Money + Smithy + Village Strategy
+ *
+ * @package Dominion Simulator
+ */
+class BigMoneySmithyVillage extends Strategy {
+	function init() {
+		$this->smithies = 0;
+		$this->villages = 0;
+		$this->silvers = 0;
+	}
+
+	function actionPhase() {
+		$this->player->play_if_possible('village');
+		$this->player->play_if_possible('village');
+		$this->player->play_if_possible('smithy');
+		$this->player->play_if_possible('smithy');
+		$this->player->play_if_possible('smithy');
+		$this->player->play_if_possible('village');
+		$this->player->play_if_possible('village');
+	}
+
+	function buyPhase() {
+		
+		$this->player->buy_if_possible('province');
+		if($this->D->supply['province'] <= 4) {
+			$this->player->buy_if_possible('duchy');
+		}
+
+		$this->player->buy_if_possible('gold');
+
+		if($this->smithies < 1) {
+			if($this->player->buy_if_possible('smithy')) {
+				$this->smithies++;
+			}
+		}
+
+		if(($this->silvers > 1) && ($this->villages <1) ) {
+			if($this->player->buy_if_possible('village')) {
+				$this->villages++;
+			}
+		}
+
+		if($this->player->buy_if_possible('silver')) {
+			$this->silvers++;
+		}
+	}
+}
+
 // --------------------------------------
 // - Create Players
 // --------------------------------------
 
 $P1 = array(
 	'name' => 'Player 1',
-	'strat' => 'BigMoney'
+	'strat' => 'BigMoneyGrandSmithy'
 );
 $P2 = array(
 	'name' => 'Player 2',
-	'strat' => 'BigMoneySmithy'
+	'strat' => 'BigMoneySmithyDuchy'
 );
 $P3 = array(
 	'name' => 'Player 3',
-	'strat' => 'BigMoneySmithyDuchy'
+	'strat' => 'BigMoneySmithyVillage'
 );
+
 
 
 // ---------------------------------------
