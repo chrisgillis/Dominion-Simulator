@@ -100,7 +100,7 @@ class Player {
 	 */
 	function buy_if_possible($cardwanted) {
 		$this->determineMoney();
-		if($this->buys) {
+		if($this->buys && $this->D->supply[$cardwanted]) {
 			if($this->money >= $this->D->cards[$cardwanted]->cost) {
 				$this->buy($cardwanted);
 				return true;
