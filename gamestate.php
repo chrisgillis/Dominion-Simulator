@@ -39,7 +39,9 @@ class GameState {
 			foreach($this->players as $player) {
 				if(DEBUG) echo $player->name . ' (Turn '.$this->turn.'): ';
 				$player->showHand();
+				$this->beforeActionPhase();
 				$player->strat->actionPhase();
+				$this->beforeBuyPhase();
 				$player->strat->buyPhase();
 				if($this->supply['province'] == 0) {
 					break;
@@ -51,8 +53,22 @@ class GameState {
 		$this->findWinner();
 	}
 
+	public function reset() {
+		$this->init();
+	}
+
+	private function beforeActionPhase() {
+		if(DEBUG) echo 'taking action phase<br>';
+	}
+
+	private function beforeBuyPhase() {
+		if(DEBUG) echo 'taking buy phase<br>';
+	}
+
 	private function findWinner() {
 		echo '<br>';
+		$scores = array();
+
 		foreach($this->players as $player) {
 			$vp = 0;
 			$allcards = array_merge($player->hand, $player->deck, $player->discard);
@@ -62,7 +78,18 @@ class GameState {
 				}
 			}
 			echo $player->name . ' has ' . $vp . ' VP!<br>';
+			$scores[$player->name] = $vp;
 		}
+		echo '<br><br>';
+
+		$max_score = max($scores);
+		$winners = array_keys($scores, $max_score);
+		
+		foreach($winners as $winner) {
+			Simulation::setWinner($winner);
+		}
+
+		
 	}
 
 	private function build_cards() {

@@ -13,24 +13,26 @@ require_once('strategy.php');
 class BigMoney extends Strategy {
 
 	public function actionPhase() {
-		if(DEBUG) echo 'taking action phase<br>';
 	}
 
 	public function buyPhase() {
-		if(DEBUG) echo 'taking buy phase<br>';
 		$this->player->buy_if_possible('province');
 		$this->player->buy_if_possible('gold');
 		$this->player->buy_if_possible('silver');
 	}
 }
 
-$P1 = new Player(array(
+$P1 = array(
 	'name' => 'Player 1',
 	'strat' => 'BigMoney'
-));
-$P2 = new Player(array(
+);
+$P2 = array(
 	'name' => 'Player 2',
 	'strat' => 'BigMoney'
-));
+);
+$P3 = array(
+	'name' => 'Player 3',
+	'strat' => 'BigMoney'
+);
 
-new Simulation(array($P1,$P2), 1);
+new Simulation(array($P1,$P2, $P3), 10);
