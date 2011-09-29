@@ -1,5 +1,15 @@
 <?php
-
+/**
+ *	Dominion Simulator
+ *  ------------------
+ *	A short PHP script that will allow a basic PHP programmer to create
+ *	Strategy classes for the board game Dominion and simulate win chances.
+ *
+ *  @package DominionSimulator
+ *	@author Chris Gillis
+ *	@license Affero GNU Public License
+ */
+ 
 class Simulation {
 
 	public static $wins;

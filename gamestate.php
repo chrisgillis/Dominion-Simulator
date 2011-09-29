@@ -1,5 +1,24 @@
 <?php
+/**
+ *	Dominion Simulator
+ *  ------------------
+ *	A short PHP script that will allow a basic PHP programmer to create
+ *	Strategy classes for the board game Dominion and simulate win chances.
+ *
+ *  @package DominionSimulator
+ *	@author Chris Gillis
+ *	@license Affero GNU Public License
+ */
 
+/**
+ * GameState Class
+ *
+ * A singleton class that tracks the game table, players, supply,
+ * trash pile, turn number, etc. Game objects can find game status
+ * by calling GameState::get_instance()
+ *
+ * @package Dominion Simulator
+ */
 class GameState {
 
 	private static $instance;
@@ -32,10 +51,24 @@ class GameState {
 		$this->turn = 1;
 	}
 
+	/**
+	 * Add Player
+	 *
+	 * This function adds a player to the game.
+	 *
+	 * @param Player a player
+	 */
 	public function addPlayer($p) {
 		array_push($this->players, $p);
 	}
 
+	/**
+	 * Game Simulator
+	 *
+	 * This runs the game loop. While there are no provinces on the table
+	 * each player takes their turn. The turn consists of three phases.
+	 * Continue until condition is met, and then find a winner.
+	 */
 	public function simulateGame() {
 		while($this->supply['province'] > 0) {
 			foreach($this->players as $player) {
@@ -55,13 +88,23 @@ class GameState {
 		$this->findWinner();
 	}
 
+	/**
+	 * Reset the Game
+	 * 
+	 * Why did I make this a singleton again?
+	 */
 	public function reset() {
 		$this->init();
 	}
 
+	/**
+	 * Get the active player
+	 *
+	 * Not used. But it's here!
+	 */
 	public function get_active_player() {
-		
 	}
+
 
 	private function beforeActionPhase() {
 		if(DEBUG) echo 'taking action phase<br>';
@@ -96,6 +139,15 @@ class GameState {
 		}
 	}
 
+	/** 
+	 * Build Cards
+	 *
+	 * Build the cards array. 
+	 * + Todo: Organize into Sets.
+	 * + Todo: Generate from text file?
+	 *
+	 * @return array 
+	 */
 	private function build_cards() {
 		$cards['estate'] = new Card(array(
 			'name' => 'Estate',

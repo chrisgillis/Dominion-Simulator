@@ -1,5 +1,23 @@
 <?php
-
+/**
+ *	Dominion Simulator
+ *  ------------------
+ *	A short PHP script that will allow a basic PHP programmer to create
+ *	Strategy classes for the board game Dominion and simulate win chances.
+ *
+ *  @package DominionSimulator
+ *	@author Chris Gillis
+ *	@license Affero GNU Public License
+ */
+ 
+/**
+ * Player Class
+ *
+ * The player class controls most player actions during a game. This includes
+ * drawing, discarding, trashing, playing cards and buying cards.
+ *
+ * @package DominionSimulator
+ */
 class Player {
 	function __construct($p) {
 		$this->D = GameState::get_instance();
@@ -27,6 +45,13 @@ class Player {
 
 	}
 
+	/**
+	 * Draw Cards
+	 *
+	 * This function adds a number of cards to the players hand
+	 *
+	 * @param integer number of cards to draw
+	 */
 	function draw($num=5) {
 		for($i = 0; $i < $num; $i++) {
 			if(empty($this->deck)) {
@@ -39,12 +64,24 @@ class Player {
 		}
 	}
 
+	/**
+	 * Discard
+	 *
+	 * This function places all cards in hand to the discard pile.
+	 */
 	function discard() {
 		foreach($this->hand as $card) {
 			array_push($this->discard, array_pop($this->hand));
 		}
 	}
 
+	/**
+	 * Refresh
+	 *
+	 * At the end of each players turn, they will discard all of their cards.
+	 * Then, draw 5 new cards. This resets the amount of default buys and
+	 * actions, and then sets how much money they have.
+	 */
 	public function refresh() {
 		if(DEBUG) echo 'refreshing<br><br>';
 		$this->discard();
@@ -54,6 +91,13 @@ class Player {
 		$this->determineMoney();
 	}
 
+	/**
+	 * Buy If Possible
+	 *
+	 * Used in a Strategy. Buys the card if it is possible.
+	 *
+	 * @return boolean whether the card is bought or not
+	 */
 	function buy_if_possible($cardwanted) {
 		$this->determineMoney();
 		if($this->buys) {
@@ -65,6 +109,13 @@ class Player {
 		return false;
 	}
 
+	/** 
+	 * Play If Possible
+	 *
+	 * Used in a Strategy. Plays the card if it is possible.
+	 *
+	 * @return boolean whether the card is played or not
+	 */
 	function play_if_possible($card) {
 		if($this->actions) {
 			if($this->in_hand($card)) {
@@ -74,6 +125,13 @@ class Player {
 		}
 	}
 
+	/**
+	 * In Hand
+	 *
+	 * Checks to see if the card is in the players hand
+	 *
+	 * @return boolean whether the card is in hand or not
+	 */
 	function in_hand($cardwanted) {
 		foreach($this->hand as $card) {
 			if($this->D->cards[$cardwanted]->name == $card->name){
@@ -83,6 +141,14 @@ class Player {
 		return false;
 	}
 
+	/** 
+	 * Buy
+	 *
+	 * Buys a card. Reduces supply. Adjusts money. Reduces buys. 
+	 * Puts card in discard pile.
+	 *
+	 * @see function buy_if_possible()
+	 */
 	function buy($cardwanted) {
 		$this->D->supply[$cardwanted]--;
 		$this->money -= $this->D->cards[$cardwanted]->cost;
@@ -91,6 +157,11 @@ class Player {
 		if(DEBUG) echo 'bought a ' . $cardwanted . '<br>';
 	}
 
+	/** 
+	 * Determine Money
+	 *
+	 * Sets player property money.
+	 */
 	function determineMoney() {
 		$money = 0;
 		foreach($this->hand as $card) {

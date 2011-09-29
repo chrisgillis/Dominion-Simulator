@@ -1,15 +1,37 @@
 <?php
+
+/**
+ *	Dominion Simulator
+ *  ------------------
+ *	A short PHP script that will allow a basic PHP programmer to create
+ *	Strategy classes for the board game Dominion and simulate win chances.
+ *
+ *	@author Chris Gillis
+ *	@license Affero GNU Public License
+ */
 error_reporting(E_ALL);
 ini_set("display_errors","1");
 
+// This should probably be VERBOSE, not debug. 
+// Toggles output!
 define("DEBUG", TRUE);
 
+
+// -------------------------------------------
+// - Load Classes
+// -------------------------------------------
 require_once('cards.php');
 require_once('gamestate.php');
 require_once('player.php');
 require_once('simulation.php');
 require_once('strategy.php');
 
+
+/**
+ *  Big Money Strategy
+ *  
+ * @package Dominion Simulator
+ */
 class BigMoney extends Strategy {
 	function buyPhase() {
 		$this->player->buy_if_possible('province');
@@ -18,6 +40,11 @@ class BigMoney extends Strategy {
 	}
 }
 
+/**
+ * Big Money + Smithy Strategy
+ *
+ * @package Dominion Simulator
+ */
 class BigMoneySmithy extends Strategy {
 	function init() {
 		$this->has_smithy = 0;
@@ -39,6 +66,11 @@ class BigMoneySmithy extends Strategy {
 	}
 }
 
+/**
+ * Big Money + Smithy + Duchy Strategy
+ *
+ * @package Dominion Simulator
+ */
 class BigMoneySmithyDuchy extends Strategy {
 	function init() {
 		$this->has_smithy = 0;
@@ -63,6 +95,10 @@ class BigMoneySmithyDuchy extends Strategy {
 	}
 }
 
+// --------------------------------------
+// - Create Players
+// --------------------------------------
+
 $P1 = array(
 	'name' => 'Player 1',
 	'strat' => 'BigMoney'
@@ -76,5 +112,10 @@ $P3 = array(
 	'strat' => 'BigMoneySmithyDuchy'
 );
 
+
+// ---------------------------------------
+// - Launch simulation
+// -   Simulation( array Players, numOfGames)
+// ---------------------------------------
 
 new Simulation(array($P1, $P2, $P3), 100);
