@@ -24,7 +24,9 @@ class GameState {
 			'province' => 12,
 			'copper' => 30, // Idk
 			'silver' => 30, // Idk
-			'gold' => 30 // Idk
+			'gold' => 30, // Idk
+
+			'smithy' => 12
 		);
 		$this->trash = array();
 		$this->turn = 1;
@@ -57,6 +59,10 @@ class GameState {
 		$this->init();
 	}
 
+	public function get_active_player() {
+		
+	}
+
 	private function beforeActionPhase() {
 		if(DEBUG) echo 'taking action phase<br>';
 	}
@@ -66,7 +72,7 @@ class GameState {
 	}
 
 	private function findWinner() {
-		echo '<br>';
+		if(DEBUG) echo '<br>';
 		$scores = array();
 
 		foreach($this->players as $player) {
@@ -77,19 +83,17 @@ class GameState {
 					$vp += $card->vp;
 				}
 			}
-			echo $player->name . ' has ' . $vp . ' VP!<br>';
+			if(DEBUG) echo $player->name . ' has ' . $vp . ' VP!<br>';
 			$scores[$player->name] = $vp;
 		}
-		echo '<br><br>';
+		if(DEBUG) echo '<br><br>';
 
 		$max_score = max($scores);
 		$winners = array_keys($scores, $max_score);
-		
+
 		foreach($winners as $winner) {
 			Simulation::setWinner($winner);
 		}
-
-		
 	}
 
 	private function build_cards() {
@@ -133,6 +137,16 @@ class GameState {
 			'cost' => 6,
 			'type' => CardType::Treasure,
 			'coin' => 3
+		));
+
+		$cards['smithy'] = new Card(array(
+			'name' => 'Smithy',
+			'cost' => 4,
+			'type' => CardType::NormalAction,
+			'effect' => function($player) {
+				if(DEBUG) echo $player->name . ' doing smithy effect<br>';
+				$player->draw(3);
+			}
 		));
 
 		return $cards;

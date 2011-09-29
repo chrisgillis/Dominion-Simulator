@@ -55,6 +55,7 @@ class Player {
 	}
 
 	function buy_if_possible($cardwanted) {
+		$this->determineMoney();
 		if($this->buys) {
 			if($this->money >= $this->D->cards[$cardwanted]->cost) {
 				$this->buy($cardwanted);
@@ -64,34 +65,54 @@ class Player {
 		return false;
 	}
 
+	function play_if_possible($card) {
+		if($this->actions) {
+			if($this->in_hand($card)) {
+				call_user_func($this->D->cards[$card]->effect, $this);
+				$this->showHand();
+			}
+		}
+	}
+
+	function in_hand($cardwanted) {
+		foreach($this->hand as $card) {
+			if($this->D->cards[$cardwanted]->name == $card->name){
+				return true;
+			} 
+		}
+		return false;
+	}
+
 	function buy($cardwanted) {
 		$this->D->supply[$cardwanted]--;
 		$this->money -= $this->D->cards[$cardwanted]->cost;
 		$this->buys--;
 		array_push($this->discard, clone($this->D->cards[$cardwanted]));
-		echo 'bought a ' . $cardwanted . '<br>';
+		if(DEBUG) echo 'bought a ' . $cardwanted . '<br>';
 	}
 
 	function determineMoney() {
+		$money = 0;
 		foreach($this->hand as $card) {
 			if($card->type == CardType::Treasure) {
-				$this->money += $card->coin;
+				$money += $card->coin;
 			}
 		}
+		$this->money = $money;
 	}
 
 	function showHand() {
-		echo 'draws: ';
-		array_map(function($card){echo $card->name.' ';},$this->hand);
-		echo '<br>';
+		if(DEBUG) echo 'draws: ';
+		if(DEBUG) array_map(function($card){echo $card->name.' ';},$this->hand);
+		if(DEBUG) echo '<br>';
 	}
 	function showInfo() {
-		echo 'Hand: ';
-		array_map(function($card){echo $card->name.' ';},$this->hand);
-		echo '<br>Discard: ';
-		array_map(function($card){echo $card->name.' ';},$this->discard);
-		echo '<br>Deck: ';
-		array_map(function($card){echo $card->name.' ';},$this->deck);
-		echo '<br><br>';
+		if(DEBUG) echo 'Hand: ';
+		if(DEBUG) array_map(function($card){echo $card->name.' ';},$this->hand);
+		if(DEBUG) echo '<br>Discard: ';
+		if(DEBUG) array_map(function($card){echo $card->name.' ';},$this->discard);
+		if(DEBUG) echo '<br>Deck: ';
+		if(DEBUG) array_map(function($card){echo $card->name.' ';},$this->deck);
+		if(DEBUG) echo '<br><br>';
 	}
 }

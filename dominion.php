@@ -11,11 +11,29 @@ require_once('simulation.php');
 require_once('strategy.php');
 
 class BigMoney extends Strategy {
+	function buyPhase() {
+		$this->player->buy_if_possible('province');
+		$this->player->buy_if_possible('gold');
+		$this->player->buy_if_possible('silver');
+	}
+}
 
-	public function actionPhase() {
+class BigMoneySmithy extends Strategy {
+
+	function init() {
+		$this->has_smithy = 0;
 	}
 
-	public function buyPhase() {
+	function actionPhase() {
+		$this->player->play_if_possible('smithy');
+	}
+
+	function buyPhase() {
+		if(! $this->has_smithy) {
+			if($this->player->buy_if_possible('smithy')) {
+				$this->has_smithy = 1;
+			}
+		}
 		$this->player->buy_if_possible('province');
 		$this->player->buy_if_possible('gold');
 		$this->player->buy_if_possible('silver');
@@ -28,11 +46,12 @@ $P1 = array(
 );
 $P2 = array(
 	'name' => 'Player 2',
-	'strat' => 'BigMoney'
+	'strat' => 'BigMoneySmithy'
 );
 $P3 = array(
 	'name' => 'Player 3',
 	'strat' => 'BigMoney'
 );
 
-new Simulation(array($P1,$P2, $P3), 10);
+
+new Simulation(array($P1, $P2, $P3), 100);

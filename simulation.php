@@ -7,7 +7,8 @@ class Simulation {
 	public function __construct($players, $runs) {
 		$this->initWins($players);
 		$this->runs = $runs;
-
+		
+		echo '<div style="width: 700px; height: 600px; overflow: auto;">';
 		while($runs > 0) {
 			$D = GameState::get_instance();
 			foreach($players as $player) {
@@ -17,7 +18,7 @@ class Simulation {
 			$D->reset();
 			$runs--;
 		}
-
+		echo '</div><br><br>';
 		$this->displayResults($players);
 	}
 
