@@ -19,7 +19,6 @@ class BigMoney extends Strategy {
 }
 
 class BigMoneySmithy extends Strategy {
-
 	function init() {
 		$this->has_smithy = 0;
 	}
@@ -40,6 +39,30 @@ class BigMoneySmithy extends Strategy {
 	}
 }
 
+class BigMoneySmithyDuchy extends Strategy {
+	function init() {
+		$this->has_smithy = 0;
+	}
+
+	function actionPhase() {
+		$this->player->play_if_possible('smithy');
+	}
+
+	function buyPhase() {
+		if(! $this->has_smithy) {
+			if($this->player->buy_if_possible('smithy')) {
+				$this->has_smithy = 1;
+			}
+		}
+		$this->player->buy_if_possible('province');
+		if($this->D->supply['province'] <= 4) {
+			$this->player->buy_if_possible('duchy');
+		}
+		$this->player->buy_if_possible('gold');
+		$this->player->buy_if_possible('silver');
+	}
+}
+
 $P1 = array(
 	'name' => 'Player 1',
 	'strat' => 'BigMoney'
@@ -50,7 +73,7 @@ $P2 = array(
 );
 $P3 = array(
 	'name' => 'Player 3',
-	'strat' => 'BigMoney'
+	'strat' => 'BigMoneySmithyDuchy'
 );
 
 
